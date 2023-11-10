@@ -1,0 +1,17 @@
+updates:
+{{- range $policy := index $.Vars.routing_policy.policy }}
+- path: /routing-policy/policy[name={{ $policy.name }}]
+  encoding: "json_ietf"
+  value:
+  - default-action:
+      policy-result: reject
+    name: {{ $policy.name }}
+    statement:
+  {{- range $statement := $policy.statement }}
+    - action:
+        policy-result: accept
+      match:
+        prefix-set: {{ $statement.match.prefix_set }}
+      name: {{ $statement.sequence_id }}
+  {{- end }}
+{{- end }}
